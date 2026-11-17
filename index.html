@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ZubietaProject</title>
+    <style>
+        :root {
+            --paper: #092328;
+            --card: #12544f;
+            --ink: #8bbb92;
+            --muted: #8bbb92;
+            --line: #2a835f;
+            --accent: #8bbb92;
+            --accent-dark: #8bbb92;
+            --warn: #f07777;
+            --tint-1: #12544f;
+            --tint-2: #2a835f;
+            --tint-3: #12544f;
+            --tint-4: #A33B3B;
+            --button-ink: #092328;
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.55;
+        }
+
+        .wrap {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            letter-spacing: -0.01em;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+            margin-bottom: 6px;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin: 0;
+        }
+
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 36px 0 0;
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        }
+
+        @media (max-width: 480px) {
+            .menu-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .menu-list a {
+            display: block;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+            border: 1.5px solid var(--line);
+            border-radius: 10px;
+            padding: 20px 22px;
+            background: var(--card);
+            border-left-width: 10px;
+            transition: transform 160ms ease, border-color 160ms ease;
+        }
+
+        .menu-list a:hover {
+            border-color: var(--accent);
+            transform: scale(1.015);
+        }
+
+        .menu-list a:hover h3 {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .menu-list a p {
+            color: var(--muted);
+            margin-top: 6px;
+            font-size: 0.95rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 22px;
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1.5px solid var(--line);
+            border-radius: 10px;
+            padding: 24px;
+            margin-top: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        input,
+        select {
+            width: 100%;
+            font: inherit;
+            color: var(--ink);
+            background: var(--paper);
+            border: 1.5px solid var(--line);
+            border-radius: 6px;
+            padding: 10px 12px;
+        }
+
+        input:focus-visible,
+        select:focus-visible,
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .row {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            align-items: end;
+        }
+
+        .actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 10px 18px;
+            border: 1.5px solid var(--accent);
+            background: var(--accent);
+            color: var(--button-ink);
+            transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+        }
+
+        button:hover {
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+            transform: scale(1.04);
+        }
+
+        button.ghost {
+            background: transparent;
+            color: var(--accent-dark);
+        }
+
+        button.ghost:hover {
+            background: var(--tint-1);
+        }
+
+        button.danger {
+            background: var(--warn);
+            border-color: var(--warn);
+        }
+
+        .result {
+            margin-top: 18px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: var(--tint-1);
+            border: 1.5px solid var(--line);
+            font-size: 1.05rem;
+            min-height: 3em;
+        }
+
+        .result strong {
+            font-size: 1.25rem;
+        }
+
+        .result.error {
+            background: var(--tint-4);
+            color: var(--warn);
+            border-color: var(--warn);
+        }
+
+        .result:empty {
+            display: none;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--line);
+            white-space: nowrap;
+        }
+
+        th {
+            background: var(--tint-1);
+            font-weight: 700;
+        }
+
+        td.num,
+        th.num {
+            text-align: right;
+        }
+
+        tfoot td {
+            font-weight: 700;
+            border-top: 2px solid var(--ink);
+            border-bottom: none;
+        }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--muted);
+            padding: 22px;
+            white-space: normal;
+        }
+
+        .bracket tr.hit td {
+            background: var(--tint-2);
+            font-weight: 600;
+        }
+
+        .steps {
+            margin-top: 12px;
+            padding-left: 18px;
+            color: var(--muted);
+        }
+
+        .steps li {
+            margin: 3px 0;
+        }
+
+        .loop-grid {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .loop-card {
+            border: 1.5px solid var(--line);
+            border-radius: 8px;
+            padding: 14px 16px;
+            background: var(--paper);
+        }
+
+        .loop-card h3 {
+            font-size: 1.05rem;
+        }
+
+        .loop-card .tag {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .loop-card .val {
+            font-size: 1.2rem;
+            font-weight: 700;
+            word-break: break-all;
+            margin-top: 4px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            button,
+            .menu-list a {
+                transition: none;
+            }
+
+            button:hover,
+            .menu-list a:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <section id="menu" class="page active" aria-labelledby="menu-title">
+            <h1 id="menu-title;" style="text-align: center;">Programming Projects</h1>
+            <ul class="menu-list">
+                <li><a href="#conversion">
+                        <h3>Unit Conversion</h3>
+                        <p>Celsius and Fahrenheit, meters and feet</p>
+                    </a></li>
+                <li><a href="#tax">
+                        <h3>Income Tax Calculator</h3>
+                        <p>Enter taxable income and get the tax from the bracket table</p>
+                    </a></li>
+                <li><a href="#loops">
+                        <h3>Factorial, Sum and Average</h3>
+                        <p>The first N natural numbers </p>
+                    </a></li>
+                <li><a href="#payroll">
+                        <h3>Simple Payroll</h3>
+                        <p>Add and delete employees in a payroll list with gross and net pay</p>
+                    </a></li>
+            </ul>
+            <p class="lead";>Franco Zubieta :D</p>
+        </section>
+
+        <section id="conversion" class="page" aria-labelledby="conv-title">
+            <a class="back" href="#menu">&larr; Main menu</a>
+            <h2 id="conv-title">Unit Conversion</h2>
+            <div class="panel">
+                <div class="row">
+                    <div>
+                        <label for="conv-type">Conversion</label>
+                        <select id="conv-type">
+                            <option value="c2f">Celsius to Fahrenheit</option>
+                            <option value="f2c">Fahrenheit to Celsius</option>
+                            <option value="m2ft">Meters to Feet</option>
+                            <option value="ft2m">Feet to Meters</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="conv-value" id="conv-label">Temperature in Celsius</label>
+                        <input type="number" id="conv-value" step="any" placeholder="0">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="button" id="conv-btn">Convert</button>
+                    <button type="button" class="ghost" id="conv-clear">Clear</button>
+                </div>
+                <div class="result" id="conv-result" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section id="tax" class="page" aria-labelledby="tax-title">
+            <a class="back" href="#menu">&larr; Main menu</a>
+            <h2 id="tax-title">Income Tax Calculator</h2>
+            <div class="panel">
+                <label for="tax-income">Taxable income (P)</label>
+                <input type="number" id="tax-income" min="0" step="0.01" placeholder="e.g. 320000">
+                <div class="actions">
+                    <button type="button" id="tax-btn">Compute tax</button>
+                    <button type="button" class="ghost" id="tax-clear">Clear</button>
+                </div>
+                <div class="result" id="tax-result" aria-live="polite"></div>
+            </div>
+            <div class="panel">
+                <h3>Tax table</h3>
+                <div class="table-scroll">
+                    <table class="bracket" id="bracket-table">
+                        <thead>
+                            <tr>
+                                <th>Over</th>
+                                <th>But not over</th>
+                                <th>Basic tax + rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-i="0">
+                                <td>&ndash;</td>
+                                <td>P250,000</td>
+                                <td>0%</td>
+                            </tr>
+                            <tr data-i="1">
+                                <td>P250,000</td>
+                                <td>P400,000</td>
+                                <td>20% of the excess over P250,000</td>
+                            </tr>
+                            <tr data-i="2">
+                                <td>P400,000</td>
+                                <td>P800,000</td>
+                                <td>P30,000 + 25% of the excess over P400,000</td>
+                            </tr>
+                            <tr data-i="3">
+                                <td>P800,000</td>
+                                <td>P2,000,000</td>
+                                <td>P130,000 + 30% of the excess over P800,000</td>
+                            </tr>
+                            <tr data-i="4">
+                                <td>P2,000,000</td>
+                                <td>P8,000,000</td>
+                                <td>P490,000 + 32% of the excess over P2,000,000</td>
+                            </tr>
+                            <tr data-i="5">
+                                <td>P8,000,000</td>
+                                <td>&ndash;</td>
+                                <td>P2,410,000 + 35% of the excess over P8,000,000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="loops" class="page" aria-labelledby="loops-title">
+            <a class="back" href="#menu">&larr; Main menu</a>
+            <h2 id="loops-title">Factorial, Sum and Average</h2>
+            <div class="panel">
+                <label for="loop-n">N (1 to 1000)</label>
+                <input type="number" id="loop-n" min="1" max="1000" step="1" placeholder="e.g. 5">
+                <div class="actions">
+                    <button type="button" id="loop-btn">Calculate</button>
+                    <button type="button" class="ghost" id="loop-clear">Clear</button>
+                </div>
+                <div class="result" id="loop-error" aria-live="polite"></div>
+                <div class="loop-grid" id="loop-grid" hidden>
+                    <div class="loop-card">
+                        <div class="tag">While loop</div>
+                        <h3>Factorial of N</h3>
+                        <div class="val" id="out-fact"></div>
+                    </div>
+                    <div class="loop-card">
+                        <div class="tag">Do while loop</div>
+                        <h3>Sum of the first N natural numbers</h3>
+                        <div class="val" id="out-sum"></div>
+                    </div>
+                    <div class="loop-card">
+                        <div class="tag">For loop</div>
+                        <h3>Average of the first N natural numbers</h3>
+                        <div class="val" id="out-avg"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="payroll" class="page" aria-labelledby="pay-title">
+            <a class="back" href="#menu">&larr; Main menu</a>
+            <h2 id="pay-title">Simple Payroll</h2>
+
+            <div class="panel">
+                <h3>Add an employee</h3>
+                <div class="row" style="margin-top:14px">
+                    <div>
+                        <label for="emp-name">Employee name</label>
+                        <input type="text" id="emp-name" placeholder="Juan Dela Cruz" autocomplete="off">
+                    </div>
+                    <div>
+                        <label for="emp-days">Days worked</label>
+                        <input type="number" id="emp-days" min="0" step="any" placeholder="15">
+                    </div>
+                    <div>
+                        <label for="emp-rate">Daily rate (P)</label>
+                        <input type="number" id="emp-rate" min="0" step="0.01" placeholder="600">
+                    </div>
+                    <div>
+                        <label for="emp-ded">Deduction amount (P)</label>
+                        <input type="number" id="emp-ded" min="0" step="0.01" placeholder="500">
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="button" id="emp-add">Add employee</button>
+                </div>
+                <div class="result" id="pay-msg" aria-live="polite"></div>
+            </div>
+
+            <div class="panel">
+                <h3>Payroll list</h3>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="num">No.</th>
+                                <th>Employee name</th>
+                                <th class="num">Days worked</th>
+                                <th class="num">Daily rate</th>
+                                <th class="num">Gross pay</th>
+                                <th class="num">Deduction amount</th>
+                                <th class="num">Net pay</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pay-body"></tbody>
+                        <tfoot id="pay-foot"></tfoot>
+                    </table>
+                </div>
+
+                <div class="row" style="margin-top:22px">
+                    <div>
+                        <label for="del-line">Line number to delete</label>
+                        <input type="number" id="del-line" min="1" step="1" placeholder="1">
+                    </div>
+                    <div>
+                        <button type="button" class="danger" id="emp-del">Delete line</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        const money = n => n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const peso = n => "P" + money(n);
+
+        function show(el, html, isError) {
+            el.className = "result" + (isError ? " error" : "");
+            el.innerHTML = html;
+        }
+        function esc(s) {
+            return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        }
+
+        function route() {
+            const id = location.hash.slice(1);
+            const target = document.getElementById(id);
+            const pages = document.querySelectorAll(".page");
+            const valid = target && target.classList.contains("page");
+            pages.forEach(p => p.classList.toggle("active", valid ? p === target : p.id === "menu"));
+            window.scrollTo(0, 0);
+        }
+        window.addEventListener("hashchange", route);
+        route();
+
+        const CONVERSIONS = {
+            c2f: { label: "Temperature in Celsius", from: "°C", to: "°F", fn: v => v * 9 / 5 + 32 },
+            f2c: { label: "Temperature in Fahrenheit", from: "°F", to: "°C", fn: v => (v - 32) * 5 / 9 },
+            m2ft: { label: "Length in meters", from: "m", to: "ft", fn: v => v * 3.28084 },
+            ft2m: { label: "Length in feet", from: "ft", to: "m", fn: v => v / 3.28084 }
+        };
+        function round(n, d) { return Number(n.toFixed(d)); }
+        $("conv-type").addEventListener("change", () => {
+            $("conv-label").textContent = CONVERSIONS[$("conv-type").value].label;
+            $("conv-result").className = "result";
+            $("conv-result").innerHTML = "";
+        });
+        $("conv-btn").addEventListener("click", () => {
+            const c = CONVERSIONS[$("conv-type").value];
+            const raw = $("conv-value").value.trim();
+            if (raw === "" || isNaN(Number(raw))) {
+                show($("conv-result"), "Enter a number to convert.", true);
+                return;
+            }
+            const v = Number(raw);
+            show($("conv-result"), `${v} ${c.from} = <strong>${round(c.fn(v), 4)} ${c.to}</strong>`);
+        });
+        $("conv-clear").addEventListener("click", () => {
+            $("conv-value").value = "";
+            show($("conv-result"), "");
+        });
+
+        function computeTax(income) {
+            if (income <= 250000) return { tax: 0, bracket: 0 };
+            if (income <= 400000) return { tax: (income - 250000) * 0.20, bracket: 1 };
+            if (income <= 800000) return { tax: 30000 + (income - 400000) * 0.25, bracket: 2 };
+            if (income <= 2000000) return { tax: 130000 + (income - 800000) * 0.30, bracket: 3 };
+            if (income <= 8000000) return { tax: 490000 + (income - 2000000) * 0.32, bracket: 4 };
+            return { tax: 2410000 + (income - 8000000) * 0.35, bracket: 5 };
+        }
+        function clearBracket() {
+            document.querySelectorAll("#bracket-table tbody tr").forEach(r => r.classList.remove("hit"));
+        }
+        $("tax-btn").addEventListener("click", () => {
+            clearBracket();
+            const raw = $("tax-income").value.trim();
+            const income = Number(raw);
+            if (raw === "" || isNaN(income) || income < 0) {
+                show($("tax-result"), "Enter a taxable income of zero or more.", true);
+                return;
+            }
+            const r = computeTax(income);
+            document.querySelector(`#bracket-table tbody tr[data-i="${r.bracket}"]`).classList.add("hit");
+            show($("tax-result"),
+                `Taxable income: ${peso(income)}<br>Income tax: <strong>${peso(r.tax)}</strong>`);
+        });
+        $("tax-clear").addEventListener("click", () => {
+            $("tax-income").value = "";
+            clearBracket();
+            show($("tax-result"), "");
+        });
+
+        $("loop-btn").addEventListener("click", () => {
+            const raw = $("loop-n").value.trim();
+            const n = Number(raw);
+            const grid = $("loop-grid");
+            if (raw === "" || !Number.isInteger(n) || n < 1 || n > 1000) {
+                grid.hidden = true;
+                show($("loop-error"), "Enter a whole number from 1 to 1000.", true);
+                return;
+            }
+            show($("loop-error"), "");
+
+            let fact = 1n;
+            let i = 1n;
+            while (i <= BigInt(n)) {
+                fact *= i;
+                i++;
+            }
+
+            let sum = 0;
+            let j = 1;
+            do {
+                sum += j;
+                j++;
+            } while (j <= n);
+
+            let total = 0;
+            for (let k = 1; k <= n; k++) {
+                total += k;
+            }
+            const avg = total / n;
+
+            const f = fact.toString();
+            $("out-fact").textContent = f.length > 60
+                ? `${f.slice(0, 20)}… (${f.length} digits)`
+                : Number(n) <= 20 ? f : f;
+            $("out-sum").textContent = sum.toLocaleString("en-US");
+            $("out-avg").textContent = avg.toLocaleString("en-US", { maximumFractionDigits: 2 });
+            grid.hidden = false;
+        });
+        $("loop-clear").addEventListener("click", () => {
+            $("loop-n").value = "";
+            $("loop-grid").hidden = true;
+            show($("loop-error"), "");
+        });
+
+        const payroll = [];
+
+        function renderPayroll() {
+            const body = $("pay-body");
+            const foot = $("pay-foot");
+            if (payroll.length === 0) {
+                body.innerHTML = '<tr class="empty-row"><td colspan="7">No employees yet. Add one above.</td></tr>';
+                foot.innerHTML = "";
+                return;
+            }
+            let totalGross = 0, totalDed = 0, totalNet = 0;
+            body.innerHTML = payroll.map((e, idx) => {
+                const gross = e.days * e.rate;
+                const net = gross - e.ded;
+                totalGross += gross; totalDed += e.ded; totalNet += net;
+                return `<tr>
+      <td class="num">${idx + 1}</td>
+      <td>${esc(e.name)}</td>
+      <td class="num">${e.days}</td>
+      <td class="num">${money(e.rate)}</td>
+      <td class="num">${money(gross)}</td>
+      <td class="num">${money(e.ded)}</td>
+      <td class="num">${money(net)}</td>
+    </tr>`;
+            }).join("");
+            foot.innerHTML = `<tr>
+    <td colspan="4">Totals</td>
+    <td class="num">${money(totalGross)}</td>
+    <td class="num">${money(totalDed)}</td>
+    <td class="num">${money(totalNet)}</td>
+  </tr>`;
+        }
+
+        $("emp-add").addEventListener("click", () => {
+            const name = $("emp-name").value.trim();
+            const daysRaw = $("emp-days").value.trim();
+            const rateRaw = $("emp-rate").value.trim();
+            const dedRaw = $("emp-ded").value.trim();
+            const days = Number(daysRaw), rate = Number(rateRaw), ded = Number(dedRaw);
+
+            if (!name) return show($("pay-msg"), "Enter the employee name.", true);
+            if (daysRaw === "" || isNaN(days) || days < 0) return show($("pay-msg"), "Enter days worked as zero or more.", true);
+            if (rateRaw === "" || isNaN(rate) || rate < 0) return show($("pay-msg"), "Enter a daily rate of zero or more.", true);
+            if (dedRaw === "" || isNaN(ded) || ded < 0) return show($("pay-msg"), "Enter a deduction amount of zero or more (use 0 for none).", true);
+
+            payroll.push({ name, days, rate, ded });
+            renderPayroll();
+            show($("pay-msg"), `${esc(name)} added on line ${payroll.length}.`);
+            ["emp-name", "emp-days", "emp-rate", "emp-ded"].forEach(id => $(id).value = "");
+            $("emp-name").focus();
+        });
+
+        $("emp-del").addEventListener("click", () => {
+            const raw = $("del-line").value.trim();
+            const line = Number(raw);
+            if (payroll.length === 0) return show($("pay-msg"), "The payroll list is empty. Nothing to delete.", true);
+            if (raw === "" || !Number.isInteger(line) || line < 1 || line > payroll.length) {
+                return show($("pay-msg"), `Enter a line number from 1 to ${payroll.length}.`, true);
+            }
+            const removed = payroll.splice(line - 1, 1)[0];
+            renderPayroll();
+            $("del-line").value = "";
+            show($("pay-msg"), `Deleted line ${line} (${esc(removed.name)}). Line numbers are updated.`);
+        });
+
+        ["emp-name", "emp-days", "emp-rate", "emp-ded"].forEach(id =>
+            $(id).addEventListener("keydown", e => { if (e.key === "Enter") $("emp-add").click(); }));
+        $("del-line").addEventListener("keydown", e => { if (e.key === "Enter") $("emp-del").click(); });
+        $("conv-value").addEventListener("keydown", e => { if (e.key === "Enter") $("conv-btn").click(); });
+        $("tax-income").addEventListener("keydown", e => { if (e.key === "Enter") $("tax-btn").click(); });
+        $("loop-n").addEventListener("keydown", e => { if (e.key === "Enter") $("loop-btn").click(); });
+
+        renderPayroll();
+    </script>
+</body>
+
+</html>
